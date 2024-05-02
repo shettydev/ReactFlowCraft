@@ -1,23 +1,52 @@
-const express = require('express');
-const mongoose = require('mongoose')
+//Require necessary packages
+require("dotenv").config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+
+//Require Routes
+const authRoute = require("./routes/auth");
+const secretRoute = require("./routes/secrets");
+const emailSequenceRoute = require('./routes/emailSequence')
+
 
 const app = express();
-const PORT = process.env.PORT || 8000;
 
-// Middleware for parsing JSON body
 app.use(express.json());
 
-app.use(express.urlencoded());
+//Setup view engine EJS, use body-parser and express static
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
 
-// initializing the DB
-// const db = require('./config/mongoose');
-mongoose.connect("mongodb+srv://prathikshetty1411:takeaguess@cluster0.8gmuyqp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-// wkQUwBFD5SaXAulT
 
-// app.use('/', require('./routes'));
-const User = require('./models/user')
+//Setup session
+app.use(session({
+  secret: process.env.SECRET_SESSION,
+  resave: false,
+  saveUninitialized: false
+}));
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+//Initialize passport
+app.use(passport.initialize());
+
+//Use passport to deal with session
+app.use(passport.session()); 
+
+
+//Connect To Database
+mongoose.connect(process.env.DB_CONNECT)
+.then(() => console.log("Database Connected"))
+.catch(err => console.log(err));
+
+
+//Use Application Routes
+app.use("/", authRoute);
+app.use("/", secretRoute);
+app.use("/api/email-sequences", emailSequenceRoute);
+
+//Run the Server
+app.listen(process.env.PORT, ()=> console.log("Server Running") );
