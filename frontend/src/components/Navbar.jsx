@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -10,12 +10,21 @@ export default function Navbar() {
             <div className="flex z-40 font-semibold">ReactFlowCraft</div>
 
             <div className="hidden items-center space-x-4 sm:flex text-blue-600">
-              {/* <Button style={{color: 'rgb(37, 99, 235)'}} >Sign In</Button> */}
-              <Button variant="ghost">Sign In</Button>
+              <NavLink to="/signin">
+                <Button variant="ghost" className="text-sm">
+                  Sign In
+                </Button>
+              </NavLink>
+              <NavLink to="/signup">
+                <Button variant="ghost" className="text-sm">
+                  Sign Up
+                </Button>
+              </NavLink>
             </div>
           </div>
         </div>
       </nav>
+
       <Outlet />
     </>
   );

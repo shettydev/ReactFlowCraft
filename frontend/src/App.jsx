@@ -5,6 +5,8 @@ import Navbar from "./components/Navbar";
 import Page404 from "./components/Page404";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
+import SignIn from "./components/SignIn";
+import SignUp from "./components/SignUp";
 
 function App() {
   const browserRouter = createBrowserRouter([
@@ -17,6 +19,14 @@ function App() {
         {
           path: "dashboard",
           element: <Dashboard />,
+        },
+        {
+          path: "signin",
+          element: <SignIn />,
+        },
+        {
+          path: "signup",
+          element: <SignUp />,
         },
       ],
     },
