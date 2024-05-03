@@ -3,12 +3,27 @@ import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { registerUserQuery } from "../api/auth";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 export default function SignUp() {
+  const createUser = registerUserQuery();
 
-  const createUser = registerUserQuery()
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const [isLoading, setLoading] = useState(false);
+
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setUserLoggedIn(
+      window.localStorage.getItem("token") === "true" ? true : false
+    );
+
+    if (window.localStorage.getItem("token") === "true") {
+      navigate("/dashboard");
+      toast.warning("User is already logged in.");
+    }
+  }, [window.localStorage.getItem("token")]);
 
   const {
     register,
@@ -18,16 +33,17 @@ export default function SignUp() {
   } = useForm();
 
   const onSubmit = (data) => {
-    createUser.mutate(data,{
+    createUser.mutate(data, {
       onSuccess: (data) => {
         // console.log(data)
         toast.success("User registered!");
-        navigate('/signin');
-      }, onError: (err) => {
-        console.log('ERROR', err)
-        toast.error('Unable to register.')
-      }
-    })
+        navigate("/signin");
+      },
+      onError: (err) => {
+        console.log("ERROR", err);
+        toast.error(err.response.data.error);
+      },
+    });
   };
 
   return (

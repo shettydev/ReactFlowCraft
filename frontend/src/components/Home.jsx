@@ -47,7 +47,7 @@ export default function Home() {
         <NavLink to={userLoggedIn ? "/dashboard" : "/signin"}>
           <Button
             variant="secondary"
-            className="mt-5 hover:bg-purple-500 hover:text-white transition-all"
+            className="mt-5 bg-purple-100 hover:bg-purple-500 hover:text-white transition-all"
           >
             Get started <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

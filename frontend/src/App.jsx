@@ -7,6 +7,7 @@ import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import Flow from "./components/Flow/Flow";
 
 function App() {
   const browserRouter = createBrowserRouter([
@@ -27,6 +28,10 @@ function App() {
         {
           path: "signup",
           element: <SignUp />,
+        },
+        {
+          path: "/workflow",
+          element: <Flow />,
         },
       ],
     },

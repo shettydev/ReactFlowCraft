@@ -3,11 +3,27 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { loginUserQuery } from "../api/auth";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 export default function SignIn() {
   const loginUser = loginUserQuery();
 
   const navigate = useNavigate();
+
+  const [isLoading, setLoading] = useState(false);
+
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setUserLoggedIn(
+      window.localStorage.getItem("token") === "true" ? true : false
+    );
+
+    if (window.localStorage.getItem("token") === "true") {
+      navigate("/dashboard");
+      toast.warning("User is already logged in.");
+    }
+  }, [window.localStorage.getItem("token")]);
 
   const {
     register,
@@ -28,7 +44,7 @@ export default function SignIn() {
         console.log("ERROR", err);
         toast.error("Unable to login.");
       },
-    })
+    });
   };
 
   return (
