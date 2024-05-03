@@ -1,11 +1,43 @@
 import { Button } from "@/components/ui/button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { loginUserQuery } from "../api/auth";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function SignIn() {
+  const loginUser = loginUserQuery();
+
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    // console.log(data);
+    loginUser.mutate(data, {
+      onSuccess: (data) => {
+        toast.success("User logged in!");
+        navigate("/dashboard");
+        window.localStorage.setItem("token", true);
+      },
+      onError: (err) => {
+        console.log("ERROR", err);
+        toast.error("Unable to login.");
+      },
+    })
+  };
+
   return (
     <>
       <div className="flex h-[92vh] border border-1 w-screen items-center overflow-hidden px-2 grainy">
-        <div className="relative flex w-96 flex-col space-y-5 rounded-lg border bg-white px-5 py-10 shadow-2xl sm:mx-auto">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="relative flex w-96 flex-col space-y-5 rounded-lg border bg-white px-5 py-10 shadow-2xl sm:mx-auto"
+        >
           <div className="-z-10 absolute top-4 left-1/2 h-full w-5/6 -translate-x-1/2 rounded-lg bg-blue-600 sm:-right-10 sm:top-auto sm:left-auto sm:w-full sm:translate-x-0"></div>
           <div className="mx-auto mb-2 space-y-3">
             <h1 className="text-center text-3xl font-bold text-zinc-700">
@@ -15,12 +47,20 @@ export default function SignIn() {
           </div>
 
           <div>
+            {errors.username && (
+              <span className="text-red-500 text-xs">
+                This field is required
+              </span>
+            )}
             <div className="relative mt-2 w-full">
               <input
                 type="text"
                 id="email"
                 className="border-1 peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-2.5 pt-4 pb-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0"
                 placeholder=" "
+                {...register("username", {
+                  required: true,
+                })}
               />
               <label
                 for="email"
@@ -33,12 +73,20 @@ export default function SignIn() {
           </div>
 
           <div>
+            {errors.password && (
+              <span className="text-red-500 text-xs">
+                This field is required
+              </span>
+            )}
             <div className="relative mt-2 w-full">
               <input
                 type="password"
                 id="password"
                 className="border-1 peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-2.5 pt-4 pb-2.5 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0"
                 placeholder=" "
+                {...register("password", {
+                  required: true,
+                })}
               />
               <label
                 for="password"
@@ -54,6 +102,7 @@ export default function SignIn() {
               Login
             </button> */}
             <Button
+              type="submit"
               variant="outline"
               className="hover:bg-blue-600 hover:text-white transition-all"
             >
@@ -68,7 +117,7 @@ export default function SignIn() {
               </Button>
             </NavLink>
           </p>
-        </div>
+        </form>
       </div>
     </>
   );

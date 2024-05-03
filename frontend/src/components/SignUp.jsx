@@ -1,8 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { registerUserQuery } from "../api/auth";
+import { toast } from "sonner";
 
 export default function SignUp() {
+
+  const createUser = registerUserQuery()
+
+  const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
@@ -11,7 +18,16 @@ export default function SignUp() {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
+    createUser.mutate(data,{
+      onSuccess: (data) => {
+        // console.log(data)
+        toast.success("User registered!");
+        navigate('/signin');
+      }, onError: (err) => {
+        console.log('ERROR', err)
+        toast.error('Unable to register.')
+      }
+    })
   };
 
   return (

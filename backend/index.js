@@ -5,20 +5,26 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
+const cors = require('cors');
+
+
 
 //Require Routes
 const authRoute = require("./routes/auth");
 const secretRoute = require("./routes/secrets");
 const emailSequenceRoute = require('./routes/emailSequence')
 
+const User = require('./models/User')
 
 const app = express();
 
 app.use(express.json());
 
+app.use(cors());
+
 //Setup view engine EJS, use body-parser and express static
 app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 
@@ -34,13 +40,13 @@ app.use(session({
 app.use(passport.initialize());
 
 //Use passport to deal with session
-app.use(passport.session()); 
+app.use(passport.session());
 
 
 //Connect To Database
 mongoose.connect(process.env.DB_CONNECT)
-.then(() => console.log("Database Connected"))
-.catch(err => console.log(err));
+  .then(() => console.log("Database Connected"))
+  .catch(err => console.log(err));
 
 
 //Use Application Routes
@@ -49,4 +55,4 @@ app.use("/", secretRoute);
 app.use("/api/email-sequences", emailSequenceRoute);
 
 //Run the Server
-app.listen(process.env.PORT, ()=> console.log("Server Running") );
+app.listen(process.env.PORT, () => console.log("Server Running"));

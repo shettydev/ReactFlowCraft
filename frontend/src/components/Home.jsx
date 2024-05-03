@@ -1,8 +1,18 @@
 import { ArrowRight } from "lucide-react";
 import DashboardImage from "../assets/dashboard-preview.jpg";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 export default function Home() {
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setUserLoggedIn(
+      window.localStorage.getItem("token") === "true" ? true : false
+    );
+  }, [window.localStorage.getItem("token")]);
+
   return (
     <>
       <div className="mx-auto w-full max-w-screen-xl px-10 py-20 md:py-0 md:px-20 mb-12 mt-40 sm:mt-40 flex flex-col items-center justify-center text-center">
@@ -34,9 +44,14 @@ export default function Home() {
           />
         </div>
 
-        <Button variant="secondary">
-          Get started <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
+        <NavLink to={userLoggedIn ? "/dashboard" : "/signin"}>
+          <Button
+            variant="secondary"
+            className="mt-5 hover:bg-purple-500 hover:text-white transition-all"
+          >
+            Get started <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </NavLink>
       </div>
     </>
   );

@@ -2,12 +2,26 @@
 const router = require("express").Router();
 const passport = require("passport");
 const jwt = require("jsonwebtoken"); // Add JWT library
+const LocalStrategy = require('passport-local').Strategy;
+const crypto = require('crypto');
 
 // Require User Model
 const User = require("../models/User");
 
 // Use passport-local configuration Create passport local Strategy
 passport.use(User.createStrategy());
+
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      // if (!user.verifyPassword(password)) { return done(null, false); }
+      return done(null, user);
+    });
+  }
+));
+
 
 // Serialize and deserialize are only necessary when using session
 passport.serializeUser(function(user, done) {
@@ -27,24 +41,39 @@ function generateToken(user) {
 // Local route Register new user
 router.post("/auth/register", async (req, res) => {
   try {
-    // Register User
-    const registerUser = await User.register(
-      { username: req.body.username },
-      req.body.password
-    );
-    if (registerUser) {
-      // if user registered, we will authenticate the user using passport
-      passport.authenticate("local")(req, res, function() {
-        res.status(200).json({ message: "User registered successfully." });
-      });
-    } else {
-      res.status(400).json({ error: "User registration failed." });
+    if (!req.body.username || !req.body.password) {
+      return res.status(400).json({ error: "Username and password are required." });
     }
+
+    // Check if the provided email is valid
+    if (!isValidEmail(req.body.username)) {
+      return res.status(400).json({ error: "Please enter a valid email address." });
+    }
+
+    // Create a new user instance
+    const newUser = new User({
+      username: req.body.username,
+      password: req.body.password
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Authenticate the user using passport
+    passport.authenticate("local")(req, res, function() {
+      res.status(200).json({ message: "User registered successfully." });
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Internal server error." });
   }
 });
+
+
+function isValidEmail(email) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+}
+
 
 // Local route Login user
 router.post("/auth/login", (req, res) => {
