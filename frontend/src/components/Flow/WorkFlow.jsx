@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import ReactFlow, {
+  ReactFlowProvider,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -22,6 +23,9 @@ const nodeTypes = {
 
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
+let id = 0;
+const getId = () => `dndnode_${id++}`;
+
 export default function WorkFlow({
   nodes,
   setNodes,
@@ -30,7 +34,10 @@ export default function WorkFlow({
   setEdges,
   onEdgesChange,
 }) {
+  const reactFlowWrapper = useRef(null);
+
   const [bgColor, setBgColor] = useState(initBgColor);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   useEffect(() => {
     const onChange = (event) => {
@@ -120,34 +127,77 @@ export default function WorkFlow({
       ),
     []
   );
+
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const type = event.dataTransfer.getData("application/reactflow");
+
+      // check if the dropped element is valid
+      if (typeof type === "undefined" || !type) {
+        return;
+      }
+
+      // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
+      // and you don't need to subtract the reactFlowBounds.left/top anymore
+      // details: https://reactflow.dev/whats-new/2023-11-10
+      const position = reactFlowInstance.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      const newNode = {
+        id: getId(),
+        type,
+        position,
+        data: { label: `${type} node` },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [reactFlowInstance]
+  );
+
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      style={{ background: bgColor }}
-      nodeTypes={nodeTypes}
-      connectionLineStyle={connectionLineStyle}
-      snapToGrid={true}
-      snapGrid={snapGrid}
-      defaultViewport={defaultViewport}
-      fitView
-      attributionPosition="bottom-left"
-    >
-      <MiniMap
-        nodeStrokeColor={(n) => {
-          if (n.type === "input") return "#0041d0";
-          if (n.type === "selectorNode") return bgColor;
-          if (n.type === "output") return "#ff0072";
-        }}
-        nodeColor={(n) => {
-          if (n.type === "selectorNode") return bgColor;
-          return "#fff";
-        }}
-      />
-      <Controls />
-    </ReactFlow>
+    <>
+      <ReactFlowProvider ref={reactFlowWrapper}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          style={{ background: bgColor }}
+          nodeTypes={nodeTypes}
+          connectionLineStyle={connectionLineStyle}
+          snapToGrid={true}
+          snapGrid={snapGrid}
+          defaultViewport={defaultViewport}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          fitView
+          attributionPosition="bottom-left"
+        >
+          <MiniMap
+            nodeStrokeColor={(n) => {
+              if (n.type === "input") return "#0041d0";
+              if (n.type === "selectorNode") return bgColor;
+              if (n.type === "output") return "#ff0072";
+            }}
+            nodeColor={(n) => {
+              if (n.type === "selectorNode") return bgColor;
+              return "#fff";
+            }}
+          />
+          <Controls />
+        </ReactFlow>
+      </ReactFlowProvider>
+    </>
   );
 }
