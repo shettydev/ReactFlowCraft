@@ -31,7 +31,12 @@ export default function Navbar() {
           <div className="flex h-14 items-center justify-between border-b border-zinc-200">
             <div className="flex z-40 font-semibold">
               <NavLink to="/">
-                <Button variant="link">ReactFlowCraft</Button>
+                <Button
+                  variant="link"
+                  className="hover:text-blue-600 transition-all"
+                >
+                  ReactFlowCraft
+                </Button>
               </NavLink>
             </div>
 

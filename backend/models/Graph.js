@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-// Define schema for node
+// Schema for node
 const nodeSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true
   },
   data: {
-    type: mongoose.Schema.Types.Mixed // Allow for flexible data structure
+    type: mongoose.Schema.Types.Mixed
   },
   position: {
     type: {
@@ -18,7 +18,7 @@ const nodeSchema = new mongoose.Schema({
   }
 });
 
-// Define schema for edge
+// Schema for edge
 const edgeSchema = new mongoose.Schema({
   id: {
     type: String,
@@ -34,16 +34,21 @@ const edgeSchema = new mongoose.Schema({
   }
 });
 
-// Define schema for storing the entire graph
+// Schema for storing the entire graph
 const graphSchema = new mongoose.Schema({
   name: String,
-  nodes: [nodeSchema], // Array of nodes
-  edges: [edgeSchema]  // Array of edges
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  nodes: [nodeSchema], 
+  edges: [edgeSchema]  
 },{
   timestamps: true
 });
 
-// Define model for the graph
+// Model for the graph
 const Graph = mongoose.model("Graph", graphSchema);
 
 module.exports = Graph;

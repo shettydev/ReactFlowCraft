@@ -4,6 +4,7 @@ import { loginUserQuery } from "../api/auth";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 export default function SignIn() {
   const loginUser = loginUserQuery();
@@ -36,9 +37,13 @@ export default function SignIn() {
     // console.log(data);
     loginUser.mutate(data, {
       onSuccess: (data) => {
+        console.log("data", data);
         toast.success("User logged in!");
         navigate("/dashboard");
+
         window.localStorage.setItem("token", true);
+        Cookies.set("token", data.token, { expires: 1 });
+        Cookies.set("userId", data.userId, { expires: 1 });
       },
       onError: (err) => {
         console.log("ERROR", err);

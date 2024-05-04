@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Graph = require("../models/Graph");
+const authMiddleware = require("../middlewares/authMiddleware")
 
 // Create a new graph
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   try {
     const { nodes, edges, name } = req.body;
-    const newGraph = new Graph({ nodes, edges, name });
+    const newGraph = new Graph({ nodes, edges, name, user: req.user.id });
     await newGraph.save();
     res.status(201).json(newGraph);
   } catch (err) {
@@ -15,9 +16,9 @@ router.post("/", async (req, res) => {
 });
 
 // Get all graphs
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
-    const graphs = await Graph.find();
+    const graphs = await Graph.find({ user: req.user.id });
     res.json(graphs);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -25,7 +26,7 @@ router.get("/", async (req, res) => {
 });
 
 // Get a specific graph by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const graph = await Graph.findById(req.params.id);
     if (!graph) {
@@ -38,7 +39,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update a graph by ID
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", authMiddleware, async (req, res) => {
   try {
     const { nodes, edges, name } = req.body;
     const updatedGraph = await Graph.findByIdAndUpdate(req.params.id, { nodes, edges, name }, { new: true });
@@ -52,7 +53,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 // Delete a graph by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const deletedGraph = await Graph.findByIdAndDelete(req.params.id);
     if (!deletedGraph) {

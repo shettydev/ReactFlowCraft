@@ -8,12 +8,13 @@ import ReactFlow, {
   useEdgesState,
 } from "reactflow";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { getEachGraphQuery } from "@/src/api/graph";
 
 export default function Flow() {
   const { graphId } = useParams();
 
-  console.log("graphId", graphId)
-
+  
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -33,6 +34,7 @@ export default function Flow() {
             onEdgesChange={onEdgesChange}
             edges={edges}
             setEdges={setEdges}
+            graphId={graphId}
           />
         </Box>
         <Box width="20%">

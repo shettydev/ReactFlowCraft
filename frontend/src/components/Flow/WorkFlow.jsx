@@ -13,8 +13,11 @@ import "reactflow/dist/style.css";
 import ColorSelectorNode from "./ColorSelectorNode";
 
 import "../../index.css";
+import { getEachGraphQuery } from "@/src/api/graph";
+import Skeleton from "react-loading-skeleton";
+import { Loader, Loader2 } from "lucide-react";
 
-const initBgColor = "#e6e6e8";
+const initBgColor = "#000000";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -34,91 +37,105 @@ export default function WorkFlow({
   edges,
   setEdges,
   onEdgesChange,
+  graphId,
 }) {
   const reactFlowWrapper = useRef(null);
 
   const [bgColor, setBgColor] = useState(initBgColor);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
+  const { isLoading, data, isFetching } = graphId
+    ? getEachGraphQuery(graphId)
+    : { isLoading: false, data: null, isFetching: false };
+
   useEffect(() => {
-    const onChange = (event) => {
-      setNodes((nds) =>
-        nds.map((node) => {
-          if (node.id !== "2") {
-            return node;
-          }
+    if (data) {
+      setNodes(data.nodes);
+      setEdges(data.edges);
+    }
+  }, [graphId, isLoading]);
 
-          const color = event.target.value;
+  useEffect(() => {
+    if (!graphId) {
+      const onChange = (event) => {
+        setNodes((nds) =>
+          nds.map((node) => {
+            if (node.id !== "2") {
+              return node;
+            }
 
-          setBgColor(color);
+            const color = event.target.value;
 
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              color,
-            },
-          };
-        })
-      );
-    };
+            setBgColor(color);
 
-    setNodes([
-      {
-        id: "1",
-        type: "input",
-        data: { label: "An input node" },
-        position: { x: 0, y: 50 },
-        sourcePosition: "right",
-      },
-      {
-        id: "2",
-        type: "selectorNode",
-        data: { onChange: onChange, color: initBgColor },
-        style: { border: "1px solid #777", padding: 10 },
-        position: { x: 300, y: 50 },
-      },
-      {
-        id: "3",
-        type: "output",
-        data: { label: "Output A" },
-        position: { x: 650, y: 25 },
-        targetPosition: "left",
-      },
-      {
-        id: "4",
-        type: "output",
-        data: { label: "Output B" },
-        position: { x: 650, y: 100 },
-        targetPosition: "left",
-      },
-    ]);
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                color,
+              },
+            };
+          })
+        );
+      };
 
-    setEdges([
-      {
-        id: "e1-2",
-        source: "1",
-        target: "2",
-        animated: true,
-        style: { stroke: "#fff" },
-      },
-      {
-        id: "e2a-3",
-        source: "2",
-        target: "3",
-        sourceHandle: "a",
-        animated: true,
-        style: { stroke: "#fff" },
-      },
-      {
-        id: "e2b-4",
-        source: "2",
-        target: "4",
-        sourceHandle: "b",
-        animated: true,
-        style: { stroke: "#fff" },
-      },
-    ]);
+      setNodes([
+        {
+          id: "1",
+          type: "input",
+          data: { label: "An input node" },
+          position: { x: 0, y: 50 },
+          sourcePosition: "right",
+        },
+        {
+          id: "2",
+          type: "selectorNode",
+          data: { onChange: onChange, color: initBgColor },
+          style: { border: "1px solid #777", padding: 10 },
+          position: { x: 300, y: 50 },
+        },
+        {
+          id: "3",
+          type: "output",
+          data: { label: "Output A" },
+          position: { x: 650, y: 25 },
+          targetPosition: "left",
+        },
+        {
+          id: "4",
+          type: "output",
+          data: { label: "Output B" },
+          position: { x: 650, y: 100 },
+          targetPosition: "left",
+        },
+      ]);
+
+      setEdges([
+        {
+          id: "e1-2",
+          source: "1",
+          target: "2",
+          animated: true,
+          style: { stroke: "#fff" },
+        },
+        {
+          id: "e2a-3",
+          source: "2",
+          target: "3",
+          sourceHandle: "a",
+          animated: true,
+          style: { stroke: "#fff" },
+        },
+        {
+          id: "e2b-4",
+          source: "2",
+          target: "4",
+          sourceHandle: "b",
+          animated: true,
+          style: { stroke: "#fff" },
+        },
+      ]);
+    }
   }, []);
 
   const onConnect = useCallback(
@@ -163,6 +180,14 @@ export default function WorkFlow({
     },
     [reactFlowInstance]
   );
+
+  if (isLoading || isFetching)
+    return (
+      <div className="flex h-full justify-center items-center">
+        {/* <Skeleton height={100} width={1000} count={3} /> */}
+        <Loader2 className="h-40 w-40 animate-spin" />
+      </div>
+    );
 
   return (
     <>

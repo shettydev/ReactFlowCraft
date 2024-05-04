@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios"
+import Cookies from "js-cookie";
 
 const authAPI = axios.create({
     baseURL: import.meta.env.VITE_API_AUTH
@@ -25,7 +26,11 @@ export const loginUserQuery = () => useMutation({
 })
 
 export const logoutUser = async (data) => {
-    const response = await authAPI.get('/logout')
+    const response = await authAPI.get('/logout', {
+        headers: {
+            "Authorization": `Bearer ${Cookies.get('token')}`
+        }
+    })
     return response.data;
 }
 

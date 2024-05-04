@@ -11,11 +11,11 @@ import { useQueryClient } from "@tanstack/react-query";
 export default function Dashboard() {
   const queryClient = useQueryClient();
 
-  const { isLoading, isError, data: graphs } = getGraphQuery();
+  const { isLoading, isError, data: graphs, isFetching } = getGraphQuery();
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
-  const [deleteLoader, setDeleteLoader] = useState(false);
+  const [deleteLoader, setDeleteLoader] = useState(null);
 
   const deleteFlow = deleteGraphQuery();
 
@@ -92,17 +92,17 @@ export default function Dashboard() {
 
                       <Button
                         onClick={() => {
-                          setDeleteLoader(true);
+                          setDeleteLoader(graph._id);
                           setTimeout(() => {
                             deleteFlow.mutate(graph._id, {
                               onSuccess: () => {
                                 toast.error("Flow deleted.");
                                 queryClient.invalidateQueries(["graphs"]);
-                                setDeleteLoader(false);
+                                setDeleteLoader(null);
                               },
                               onError: () => {
                                 toast.warning("Flow not deleted.");
-                                setDeleteLoader(false);
+                                setDeleteLoader(null);
                               },
                             });
                           }, 1000);
@@ -112,7 +112,7 @@ export default function Dashboard() {
                         variant="destructive"
                       >
                         {/* Todo: add loader */}
-                        {deleteLoader ? (
+                        {deleteLoader === graph._id ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                           <Trash className="h-4 w-4" />
@@ -123,7 +123,7 @@ export default function Dashboard() {
                 </>
               ))}
           </ul>
-        ) : isLoading ? (
+        ) : isLoading && isFetching ? (
           <Skeleton height={100} className="mt-10" count={3} />
         ) : (
           <div className="mt-16 flex flex-col items-center gap-2">
