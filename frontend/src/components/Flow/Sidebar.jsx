@@ -24,16 +24,17 @@ import { createGraphQuery } from "@/src/api/graph";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export default function Sidebar({ addNode, setNodes, nodes, edges }) {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [title, setTitle] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const createGraph = createGraphQuery();
 
   const navigate = useNavigate();
-
 
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
@@ -184,28 +185,34 @@ export default function Sidebar({ addNode, setNodes, nodes, edges }) {
               <DialogFooter>
                 <Button
                   onClick={() => {
+                    setIsLoading(true);
+
                     const data = {
                       name: title,
                       nodes,
                       edges,
                     };
 
-                    console.log(data);
-
                     createGraph.mutate(data, {
                       onSuccess: (data) => {
                         toast.success("Flow saved.");
                         navigate("/dashboard");
+                        setIsLoading(false);
                       },
                       onError: (err) => {
                         console.log("ERROR", err);
                         toast.error("Try again later.");
+                        setIsLoading(false);
                       },
                     });
                   }}
                   type="submit"
                 >
-                  Save changes
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Save changes"
+                  )}
                 </Button>
               </DialogFooter>
             </DialogContent>

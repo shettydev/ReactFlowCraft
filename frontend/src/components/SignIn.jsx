@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { Loader2 } from "lucide-react";
 
 export default function SignIn() {
   const loginUser = loginUserQuery();
@@ -34,12 +35,14 @@ export default function SignIn() {
   } = useForm();
 
   const onSubmit = (data) => {
+    setLoading(true);
     // console.log(data);
     loginUser.mutate(data, {
       onSuccess: (data) => {
         console.log("data", data);
         toast.success("User logged in!");
         navigate("/dashboard");
+        setLoading(false);
 
         window.localStorage.setItem("token", true);
         Cookies.set("token", data.token, { expires: 1 });
@@ -47,6 +50,7 @@ export default function SignIn() {
       },
       onError: (err) => {
         console.log("ERROR", err);
+        setLoading(false);
         toast.error("Unable to login.");
       },
     });
@@ -127,7 +131,11 @@ export default function SignIn() {
               variant="outline"
               className="hover:bg-blue-600 hover:text-white transition-all"
             >
-              Sign In
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </div>
           <p className="text-center text-gray-600">

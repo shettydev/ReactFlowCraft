@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
+  // base: "https://github.com/prathikshetty14/ReactFlowCraft/tree/main",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
