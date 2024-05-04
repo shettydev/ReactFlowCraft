@@ -100,8 +100,15 @@ router.post("/auth/login", (req, res) => {
       res.status(401).json({ error: "Authentication failed." });
     } else {
       passport.authenticate("local")(req, res, () => {
-        const token = generateToken(req.user);
-        res.status(200).json({ message: "Login successful.", token: token, userId: req.user._id });
+        // Retrieve the updated user
+        User.findOne({ username: req.body.username }, async (err, updatedUser) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." });
+          }
+          const token = generateToken(req.user);
+          res.status(200).json({ message: "Login successful.", token: token, userId: updatedUser._id });
+        });
       });
     }
   });
