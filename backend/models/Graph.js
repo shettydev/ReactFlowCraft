@@ -41,6 +41,9 @@ const edgeSchema = new mongoose.Schema({
   animated: {
     type: Boolean
   },
+  sourceHandle: {
+    type: String
+  },
   style: {
     type: mongoose.Schema.Types.Mixed
   }

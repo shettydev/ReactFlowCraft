@@ -6,8 +6,11 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SignIn() {
+  const queryClient = useQueryClient();
+
   const loginUser = loginUserQuery();
 
   const navigate = useNavigate();
@@ -39,7 +42,8 @@ export default function SignIn() {
     // console.log(data);
     loginUser.mutate(data, {
       onSuccess: (data) => {
-        console.log("data", data);
+        // console.log("data", data);
+        queryClient.invalidateQueries(["graphs"]);
         toast.success("User logged in!");
         navigate("/dashboard");
         setLoading(false);

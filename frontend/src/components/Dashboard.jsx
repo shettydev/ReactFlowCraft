@@ -32,6 +32,7 @@ export default function Dashboard() {
     }
   }, [window.localStorage.getItem("token")]);
 
+
   return (
     <div className="w-full h-screen grainy">
       <main className="mx-auto max-w-7xl md:p-10">
@@ -123,7 +124,7 @@ export default function Dashboard() {
                 </>
               ))}
           </ul>
-        ) : isLoading && isFetching ? (
+        ) : isFetching || isLoading  ? (
           <Skeleton height={100} className="mt-10" count={3} />
         ) : (
           <div className="mt-16 flex flex-col items-center gap-2">
