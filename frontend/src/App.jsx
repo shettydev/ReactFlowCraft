@@ -33,6 +33,10 @@ function App() {
           path: "/workflow",
           element: <Flow />,
         },
+        {
+          path: "/workflow/:graphId",
+          element: <Flow />,
+        },
       ],
     },
   ]);

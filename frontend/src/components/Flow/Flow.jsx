@@ -7,8 +7,13 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
 } from "reactflow";
+import { useParams } from "react-router-dom";
 
 export default function Flow() {
+  const { graphId } = useParams();
+
+  console.log("graphId", graphId)
+
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -31,7 +36,12 @@ export default function Flow() {
           />
         </Box>
         <Box width="20%">
-          <Sidebar addNode={addNode} />
+          <Sidebar
+            addNode={addNode}
+            setNodes={setNodes}
+            nodes={nodes}
+            edges={edges}
+          />
         </Box>
       </div>
     </div>

@@ -1,14 +1,23 @@
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Ghost } from "lucide-react";
+import { Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { deleteGraphQuery, getGraphQuery } from "../api/graph";
+import Skeleton from "react-loading-skeleton";
+import { format } from "date-fns";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Dashboard() {
-  const [isLoading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { isLoading, isError, data: graphs } = getGraphQuery();
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  const [deleteLoader, setDeleteLoader] = useState(false);
+
+  const deleteFlow = deleteGraphQuery();
 
   const navigate = useNavigate();
 
@@ -40,19 +49,82 @@ export default function Dashboard() {
         </div>
 
         {/* display all user files */}
-        {false ? (
+        {graphs && graphs.length !== 0 ? (
           <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
-            <li>
-              <a
-                href="#"
-                className="flex items-center justify-between rounded-lg p-4 text-sm hover:bg-zinc-100"
-              >
-                Hi
-              </a>
-            </li>
+            {graphs
+              .sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              )
+              .map((graph) => (
+                <>
+                  <li
+                    key={graph._id}
+                    className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
+                  >
+                    <NavLink
+                      to={`/workflow/${graph._id}`}
+                      className="flex flex-col gap-2"
+                    >
+                      <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
+                        <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
+                        <div className="flex-1 truncate">
+                          <div className="flex items-center space-x-3">
+                            <h3 className="truncate text-lg font-medium text-zinc-900">
+                              {graph.name}
+                            </h3>
+                          </div>
+                        </div>
+                      </div>
+                    </NavLink>
+
+                    <div className="px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-6 text-xs text-zinc-500">
+                      <div className="flex items-center gap-2">
+                        <Plus className="h-4 w-4" />
+                        {format(new Date(graph.createdAt), "MMM yyyy")}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* <MessageSquare className="h-4 w-4" />
+                      mocked */}
+                      </div>
+
+                      <Button
+                        onClick={() => {
+                          setDeleteLoader(true);
+                          setTimeout(() => {
+                            deleteFlow.mutate(graph._id, {
+                              onSuccess: () => {
+                                toast.error("Flow deleted.");
+                                queryClient.invalidateQueries(["graphs"]);
+                                setDeleteLoader(false);
+                              },
+                              onError: () => {
+                                toast.warning("Flow not deleted.");
+                                setDeleteLoader(false);
+                              },
+                            });
+                          }, 1000);
+                        }}
+                        size="sm"
+                        className="w-full"
+                        variant="destructive"
+                      >
+                        {/* Todo: add loader */}
+                        {deleteLoader ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </li>
+                </>
+              ))}
           </ul>
         ) : isLoading ? (
-          <Skeleton height={100} className="my-2" count={3} />
+          <Skeleton height={100} className="mt-10" count={3} />
         ) : (
           <div className="mt-16 flex flex-col items-center gap-2">
             <Ghost className="h-8 w-8 text-zinc-800" />

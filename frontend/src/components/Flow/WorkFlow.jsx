@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import ReactFlow, {
   ReactFlowProvider,
+  Background,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -13,7 +14,7 @@ import ColorSelectorNode from "./ColorSelectorNode";
 
 import "../../index.css";
 
-const initBgColor = "#1A192B";
+const initBgColor = "#e6e6e8";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -196,6 +197,7 @@ export default function WorkFlow({
             }}
           />
           <Controls />
+          <Background />
         </ReactFlow>
       </ReactFlowProvider>
     </>
