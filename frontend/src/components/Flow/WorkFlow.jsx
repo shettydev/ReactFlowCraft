@@ -47,9 +47,6 @@ export default function WorkFlow({
   const [bgColor, setBgColor] = useState(initBgColor);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-
-
-
   useEffect(() => {
     if (data) {
       setNodes(data.nodes);
@@ -171,11 +168,40 @@ export default function WorkFlow({
         x: event.clientX,
         y: event.clientY,
       });
+
+      console.log("type", type);
       const newNode = {
         id: getId(),
         type,
         position,
         data: { label: `${type} node` },
+        style:
+          type === "Send Email"
+            ? {
+                backgroundColor: "#FECACA",
+                color: "white",
+                borderRadius: 10,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }
+            : type === "Wait"
+            ? {
+                backgroundColor: "#E9D5FF",
+                color: "white",
+                borderRadius: 10,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }
+            : {
+                backgroundColor: "#BBF7D0",
+                color: "white",
+                borderRadius: 10,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              },
       };
 
       setNodes((nds) => nds.concat(newNode));

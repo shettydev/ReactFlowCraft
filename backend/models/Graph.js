@@ -9,6 +9,12 @@ const nodeSchema = new mongoose.Schema({
   data: {
     type: mongoose.Schema.Types.Mixed
   },
+  style: {
+    type: mongoose.Schema.Types.Mixed
+  },
+  type: {
+    type: String
+  },
   position: {
     type: {
       x: Number,
@@ -31,6 +37,12 @@ const edgeSchema = new mongoose.Schema({
   target: {
     type: String,
     required: true
+  },
+  animated: {
+    type: Boolean
+  },
+  style: {
+    type: mongoose.Schema.Types.Mixed
   }
 });
 
@@ -42,9 +54,9 @@ const graphSchema = new mongoose.Schema({
     ref: "User",
     required: true
   },
-  nodes: [nodeSchema], 
-  edges: [edgeSchema]  
-},{
+  nodes: [nodeSchema],
+  edges: [edgeSchema]
+}, {
   timestamps: true
 });
 
