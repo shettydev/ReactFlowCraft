@@ -38,15 +38,17 @@ export default function WorkFlow({
   setEdges,
   onEdgesChange,
   graphId,
+  data,
+  isLoading,
+  isFetching,
 }) {
   const reactFlowWrapper = useRef(null);
 
   const [bgColor, setBgColor] = useState(initBgColor);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  const { isLoading, data, isFetching } = graphId
-    ? getEachGraphQuery(graphId)
-    : { isLoading: false, data: null, isFetching: false };
+
+
 
   useEffect(() => {
     if (data) {
@@ -185,7 +187,7 @@ export default function WorkFlow({
     return (
       <div className="flex h-full justify-center items-center">
         {/* <Skeleton height={100} width={1000} count={3} /> */}
-        <Loader2 className="h-40 w-40 animate-spin" />
+        <Loader2 className="h-10 w-10 animate-spin" />
       </div>
     );
 

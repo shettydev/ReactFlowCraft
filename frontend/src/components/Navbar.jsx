@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { logoutUserQuery } from "../api/auth";
 import { toast } from "sonner";
+import LogoImage from "../assets/logo.png"
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
@@ -35,6 +36,7 @@ export default function Navbar() {
                   variant="link"
                   className="hover:text-blue-600 transition-all"
                 >
+                  <img src={LogoImage} className="w-12 h-12" />
                   ReactFlowCraft
                 </Button>
               </NavLink>

@@ -14,7 +14,10 @@ import { getEachGraphQuery } from "@/src/api/graph";
 export default function Flow() {
   const { graphId } = useParams();
 
-  
+  const { isLoading, data, isFetching } = graphId
+    ? getEachGraphQuery(graphId)
+    : { isLoading: false, data: null, isFetching: false };
+
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -35,6 +38,9 @@ export default function Flow() {
             edges={edges}
             setEdges={setEdges}
             graphId={graphId}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            data={data}
           />
         </Box>
         <Box width="20%">
@@ -43,6 +49,9 @@ export default function Flow() {
             setNodes={setNodes}
             nodes={nodes}
             edges={edges}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            data={data}
           />
         </Box>
       </div>

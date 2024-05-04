@@ -20,19 +20,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { createGraphQuery } from "@/src/api/graph";
-import { useState } from "react";
+import { createGraphQuery, updateGraphQuery } from "@/src/api/graph";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function Sidebar({ addNode, setNodes, nodes, edges }) {
+export default function Sidebar({
+  addNode,
+  setNodes,
+  nodes,
+  edges,
+  data,
+  isLoading: graphIsLoading,
+  isFetching,
+}) {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const createGraph = createGraphQuery();
+  const updateGraph = updateGraphQuery();
+
+  const queryClient = useQueryClient();
+
+
+  useEffect(() => {
+    setTitle(data?.name || "");
+  }, [graphIsLoading, isFetching]);
 
   const navigate = useNavigate();
 
@@ -55,6 +72,49 @@ export default function Sidebar({ addNode, setNodes, nodes, edges }) {
     addNode(newNode);
   };
 
+  const handleSave = () => {
+    setIsLoading(true);
+
+    const finalData = {
+      name: title,
+      nodes,
+      edges,
+    };
+
+    if (data) {
+      finalData.id = data._id;
+
+      console.log("finalData", finalData)
+
+      updateGraph.mutate(finalData, {
+        onSuccess: (data) => {
+          toast.success("Flow updated.");
+          navigate("/dashboard");
+          queryClient.invalidateQueries(["graphs"]);
+          setIsLoading(false);
+        },
+        onError: (err) => {
+          console.log("ERROR", err);
+          toast.error("Try again later.");
+          setIsLoading(false);
+        },
+      });
+    } else {
+      createGraph.mutate(finalData, {
+        onSuccess: (data) => {
+          toast.success("Flow saved.");
+          navigate("/dashboard");
+          setIsLoading(false);
+        },
+        onError: (err) => {
+          console.log("ERROR", err);
+          toast.error("Try again later.");
+          setIsLoading(false);
+        },
+      });
+    }
+  };
+
   return (
     <>
       <aside className="w-full h-full flex flex-col p-4">
@@ -73,6 +133,7 @@ export default function Sidebar({ addNode, setNodes, nodes, edges }) {
           </Button>
         </div>
 
+        {/* Create Node */}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline">Create a node</Button>
@@ -118,6 +179,8 @@ export default function Sidebar({ addNode, setNodes, nodes, edges }) {
           </SheetContent>
         </Sheet>
         <hr className="my-6" />
+
+        {/* Predefined Nodes */}
         <div className="w-full">
           <div className="my-2">
             <p className="text-zinc-600 text-sm italic">
@@ -152,16 +215,21 @@ export default function Sidebar({ addNode, setNodes, nodes, edges }) {
             </Button>
           </div>
         </div>
+
+        {/* Save workflow & Modal */}
         <div className="h-full flex items-end justify-end">
           <Dialog>
             <DialogTrigger asChild>
               <Button
                 // variant="outline"
+                disabled={graphIsLoading || isFetching}
                 className="mb-4 bg-blue-500 hover:bg-blue-400 hover:text-white"
               >
                 Save
               </Button>
             </DialogTrigger>
+
+            {/* Workflow Name Modal */}
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Save your workflow</DialogTitle>
@@ -183,31 +251,7 @@ export default function Sidebar({ addNode, setNodes, nodes, edges }) {
                 </div>
               </div>
               <DialogFooter>
-                <Button
-                  onClick={() => {
-                    setIsLoading(true);
-
-                    const data = {
-                      name: title,
-                      nodes,
-                      edges,
-                    };
-
-                    createGraph.mutate(data, {
-                      onSuccess: (data) => {
-                        toast.success("Flow saved.");
-                        navigate("/dashboard");
-                        setIsLoading(false);
-                      },
-                      onError: (err) => {
-                        console.log("ERROR", err);
-                        toast.error("Try again later.");
-                        setIsLoading(false);
-                      },
-                    });
-                  }}
-                  type="submit"
-                >
+                <Button onClick={handleSave} type="submit">
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (

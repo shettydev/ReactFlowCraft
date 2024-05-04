@@ -21,6 +21,20 @@ export const createGraphQuery = () => useMutation({
     mutationFn: createGraph
 })
 
+export const updateGraph = async (data) => {
+    const response = await graphAPI.patch(`/${data.id}`, data, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${Cookies.get('token')}`
+        },
+    })
+    return response.data;
+}
+
+export const updateGraphQuery = () => useMutation({
+    mutationFn: updateGraph
+})
+
 export const getGraphs = async () => {
     const response = await graphAPI.get('/', {
         headers: {
