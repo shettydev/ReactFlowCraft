@@ -39,7 +39,7 @@ git clone https://github.com/prathikshetty14/ReactFlowCraft/
 cd backend
 ```
 
-3. Install dependencies:
+3. Install dependencies (I have used `bun`):
 
 ```bash
 bun install
