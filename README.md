@@ -4,6 +4,9 @@ ReactFlowCraft is a comprehensive full-stack workflow project designed to facili
 
 ## Features
 
+![screencapture-reactflowchart-1-netlify-app-2024-05-06-02_42_36](https://github.com/prathikshetty14/ReactFlowCraft/assets/63280396/6fb498ed-2688-4cd6-8d72-ea63043995e9)
+
+
 - **Customizable Workflows**: Design workflows tailored to your specific needs using a wide range of pre-built or personalized nodes.
 - **Intuitive User Interface**: The frontend interface, built with React.js, Vite, and Tailwind, offers a seamless experience for effortless workflow creation and management.
 - **Robust Backend Functionality**: The backend, powered by Node.js, Express.js, and MongoDB, ensures reliable performance and data management.
