@@ -22,11 +22,6 @@ const userSchema = new mongoose.Schema({
     trim: true,
     min: 6
   },
-  // email: {
-  //   type: String,
-  //   required: true,
-  //   unique: true
-  // },
   permissions: {
     type: String
   },
