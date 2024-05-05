@@ -1,8 +1,8 @@
-### ReactFlowCraft Frontend
+# ReactFlowCraft Frontend
 
 Welcome to the ReactFlowCraft frontend repository! This project is built using React.js (with Vite), Tailwind CSS, ReactFlow, TanstackQuery, shadcn/ui, and other libraries. Below you'll find instructions on how to set up the project and navigate through its features.
 
-#### Pages and Routes
+## Pages and Routes
 
 The ReactFlowCraft frontend consists of several pages accessible through the following routes:
 
@@ -22,7 +22,7 @@ The ReactFlowCraft frontend consists of several pages accessible through the fol
 
 - **Workflow Details**: Page for viewing details of a specific workflow. Users can access detailed information about a particular workflow, including its nodes, connections, and execution history.
 
-#### Setup
+## Setup
 
 1. Clone the repository from GitHub:
 
@@ -50,7 +50,7 @@ bun start
 
 5. Access the application at `http://localhost:3000`.
 
-#### Features
+## Features
 
 - **Workflow Creation**: Create and customize workflows using ReactFlow.
 
@@ -62,7 +62,7 @@ bun start
 
 - **User Management**: Manage workflows and account settings.
 
-#### Technologies Used
+## Technologies Used
 
 - **React.js (with Vite)**: Frontend library for building user interfaces.
 - **Tailwind CSS**: Utility-first CSS framework for styling.
@@ -70,7 +70,7 @@ bun start
 - **TanstackQuery**: Data fetching and caching library.
 - **shadcn/ui**: UI components library.
 
-#### Contributions
+## Contributions
 
 Contributions to ReactFlowCraft are welcome! If you find any bugs or have suggestions for improvements, please feel free to open an issue or submit a pull request.
 
