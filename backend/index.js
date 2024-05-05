@@ -12,7 +12,6 @@ const cors = require('cors');
 //Require Routes
 const authRoute = require("./routes/auth");
 const secretRoute = require("./routes/secrets");
-const emailSequenceRoute = require('./routes/emailSequence')
 const graphRoute = require('./routes/graphRoutes')
 
 const User = require('./models/User')
@@ -53,7 +52,6 @@ mongoose.connect(process.env.DB_CONNECT)
 //Use Application Routes
 app.use("/", authRoute);
 app.use("/", secretRoute);
-app.use("/api/email-sequences", emailSequenceRoute);
 app.use('/api/graphs', graphRoute);
 
 //Run the Server
