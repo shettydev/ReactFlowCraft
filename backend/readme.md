@@ -72,6 +72,7 @@ Once the server is running, you can use it to handle user authentication, manage
 ## API Endpoints
 
 - `POST /api/auth/register`: Register a new user.
+  https://reactflowcraft.onrender.com//api/auth/register
 - `POST /api/auth/login`: Log in an existing user.
 - `GET /api/auth/logout`: Log out the current user.
 - `POST /api/graphs`: Create a new graph representing an email sequence.
