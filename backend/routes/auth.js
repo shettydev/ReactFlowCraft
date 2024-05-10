@@ -1,9 +1,9 @@
-// Require express router, passport, passport-google-oauth20, passport-facebook
 const router = require("express").Router();
 const passport = require("passport");
 const jwt = require("jsonwebtoken"); // Add JWT library
 const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
+const bcrypt = require("bcrypt");
 const authMiddleware = require("../middlewares/authMiddleware")
 
 
@@ -58,10 +58,13 @@ router.post("/auth/register", async (req, res) => {
       return res.status(400).json({ error: "User already exists." });
     }
 
-    // Create a new user instance
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(req.body.password, 10); // Salt rounds: 10
+
+    // Create a new user instance with hashed password
     const newUser = new User({
       username: req.body.username,
-      password: req.body.password
+      password: hashedPassword // Save the hashed password
     });
 
     // Save the user to the database
@@ -70,7 +73,7 @@ router.post("/auth/register", async (req, res) => {
     const token = generateToken(newUser);
     res.status(200).json({ message: "User registered successfully.", token: token, userId: newUser._id });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ error: "Internal server error." });
   }
 });

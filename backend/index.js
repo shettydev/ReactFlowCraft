@@ -11,7 +11,8 @@ const cors = require('cors');
 
 //Require Routes
 const authRoute = require("./routes/auth");
-const graphRoute = require('./routes/graphRoutes')
+const graphRoute = require('./routes/graphRoutes');
+const executionRoute = require('./routes/execution');
 
 const User = require('./models/User')
 
@@ -51,6 +52,7 @@ mongoose.connect(process.env.DB_CONNECT)
 //Use Application Routes
 app.use("/", authRoute);
 app.use('/api/graphs', graphRoute);
+app.use('/api/execute', executionRoute);
 
 //Run the Server
 app.listen(process.env.PORT, () => console.log("Server Running"));
