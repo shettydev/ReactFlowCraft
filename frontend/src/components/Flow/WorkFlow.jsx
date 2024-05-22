@@ -11,6 +11,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 
 import ColorSelectorNode from "./ColorSelectorNode";
+import CustomNode from "./CustomNode";
 
 import "../../index.css";
 import { getEachGraphQuery } from "@/src/api/graph";
@@ -23,6 +24,7 @@ const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
 const nodeTypes = {
   selectorNode: ColorSelectorNode,
+  custom: CustomNode
 };
 
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };

@@ -24,8 +24,43 @@ import { createGraphQuery, updateGraphQuery } from "@/src/api/graph";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  Info,
+  Loader2,
+} from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Switch } from "@/components/ui/switch";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function Sidebar({
   addNode,
@@ -36,8 +71,24 @@ export default function Sidebar({
   isLoading: graphIsLoading,
   isFetching,
 }) {
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const formSchema = z.object({
+    text: z.string().min(1, {
+      message: "This field cannot be empty.",
+    }),
+    source: z.string().nonempty({
+      message: "Source is required.",
+    }),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    mode: "onChange",
+  });
+
+  const [text, setText] = useState("");
+  const [sourceToggle, setSourceToggle] = useState(false);
+  const [targetToggle, setTargetToggle] = useState(false);
+  const [source, setSource] = useState("");
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,7 +96,6 @@ export default function Sidebar({
   const updateGraph = updateGraphQuery();
 
   const queryClient = useQueryClient();
-
 
   useEffect(() => {
     setTitle(data?.name || "");
@@ -59,17 +109,52 @@ export default function Sidebar({
   };
 
   const handleCreate = () => {
-    // Create a new node data object based on the sidebar input
+    const data = form.getValues();
+    console.log("data 123", data);
+
+    // if (!data.text || (sourceToggle ? !data.source : !data.target)) {
+    //   toast.error("All fields are required");
+    //   return;
+    // }
+
+    // // Create a new node data object based on the sidebar input
+    // const newNode = {
+    //   id: Math.random().toString(),
+    //   type: sourceToggle ? "input" : "output",
+    //   data: { label: `${data.text}` },
+    //   position: { x: 0, y: 0 },
+    //   sourcePosition: sourceToggle ? data.source : null,
+    //   targetPosition: targetToggle ? data.target : null,
+    // };
+
     const newNode = {
       id: Math.random().toString(),
-      type: "default",
-      data: { label: `${name}(${username})` }, // Customize the label based on the sidebar input
-      position: { x: 0, y: 0 }, // You can adjust the position as needed
-      //   sourcePosition: "left",
-      //   targetPosition: "right",
+      type: "custom",
+      data: {
+        label: `${data.text}`,
+        source: data.source,
+        target: data.target,
+        color: data.color,
+        type: data.type,
+      },
+      position: { x: 0, y: 0 },
+      // sourcePosition: sourceToggle ? data.source : null,
+      // targetPosition: targetToggle ? data.target : null,
     };
+
+    console.log("newNode", newNode);
     // Pass the new node to the parent component for adding it to the workflow
     addNode(newNode);
+
+    setText("");
+    setTargetToggle(false);
+    setSourceToggle(false);
+
+    toast.success("Node added");
+    form.reset({
+      source: "",
+      text: "",
+    });
   };
 
   const handleSave = () => {
@@ -84,7 +169,7 @@ export default function Sidebar({
     if (data) {
       finalData.id = data._id;
 
-      console.log("finalData", finalData)
+      console.log("finalData", finalData);
 
       updateGraph.mutate(finalData, {
         onSuccess: (data) => {
@@ -119,9 +204,6 @@ export default function Sidebar({
     <>
       <aside className="w-full h-full flex flex-col p-4">
         <div className="flex w-full justify-end">
-          {/* <Button className="mb-4 bg-blue-600 text-white hover:bg-blue-500">
-            Save
-          </Button> */}
           <Button
             variant="ghost"
             onClick={() => {
@@ -133,51 +215,311 @@ export default function Sidebar({
           </Button>
         </div>
 
-        {/* Create Node */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline">Create a node</Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Custom Node</SheetTitle>
-              <SheetDescription>
-                Make customized node here. Click on create when you're done.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="title" className="text-right">
-                  Title
-                </Label>
-                <Input
-                  id="title"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
-                  Description
-                </Label>
-                <Input
-                  id="description"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="col-span-3"
-                />
-              </div>
-            </div>
-            <SheetFooter>
-              <SheetClose asChild>
-                <Button type="submit" onClick={handleCreate}>
-                  Create
-                </Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleCreate)}>
+            {/* Create Text Node */}
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline">Create a node</Button>
+              </SheetTrigger>
+
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Custom Node</SheetTitle>
+                  <SheetDescription>
+                    Make customized node here. Click on create when you're done.
+                  </SheetDescription>
+                </SheetHeader>
+                <ScrollArea className="h-[450px]">
+                  <div className="grid gap-10 py-4 px-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="title" className="text-right">
+                        Text
+                      </Label>
+                      <FormField
+                        control={form.control}
+                        name="text"
+                        render={({ field }) => (
+                          <>
+                            <FormControl>
+                              <Input
+                                className="col-span-3 w-full"
+                                placeholder="Enter text here..."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs col-span-4 w-full text-center" />
+                          </>
+                        )}
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="description" className="text-right">
+                        Source
+                      </Label>
+
+                      <Switch
+                        checked={sourceToggle}
+                        onCheckedChange={() => {
+                          // if (!targetToggle) {
+                          setSourceToggle(!sourceToggle);
+                          // } else {
+                          //   toast.error("Source and target cannot be enabled.");
+                          // }
+                        }}
+                        className="col-span-3"
+                      />
+                    </div>
+
+                    {sourceToggle && (
+                      <>
+                        <Controller
+                          name="source"
+                          control={form.control}
+                          render={({ field }) => (
+                            <>
+                              <FormControl>
+                                <ToggleGroup
+                                  type="single"
+                                  className="grid grid-cols-4 items-center gap-4"
+                                  variant="outline"
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                >
+                                  <div className="col-span-4 text-center">
+                                    <ToggleGroupItem
+                                      value="Top"
+                                      className={`${
+                                        field.value === "Top"
+                                          ? "bg-green-200"
+                                          : ""
+                                      }`}
+                                    >
+                                      <ArrowUp />
+                                    </ToggleGroupItem>
+                                  </div>
+                                  <div className="col-span-4 gap-6 flex justify-between">
+                                    <ToggleGroupItem
+                                      value="Left"
+                                      className={`${
+                                        field.value === "Left"
+                                          ? "bg-green-200"
+                                          : ""
+                                      }`}
+                                    >
+                                      <ArrowLeft />
+                                    </ToggleGroupItem>
+                                    <div className="border border-1 border-zinc-800 rounded-md px-6 flex items-center">
+                                      <p className="text-center text-xs">
+                                        Select the direction of the source
+                                      </p>
+                                    </div>
+                                    <ToggleGroupItem
+                                      value="Right"
+                                      className={`${
+                                        field.value === "Right"
+                                          ? "bg-green-200"
+                                          : ""
+                                      }`}
+                                    >
+                                      <ArrowRight />
+                                    </ToggleGroupItem>
+                                  </div>
+                                  <div className="col-span-4 text-center">
+                                    <ToggleGroupItem
+                                      value="Bottom"
+                                      className={`${
+                                        field.value === "Bottom"
+                                          ? "bg-green-200"
+                                          : ""
+                                      }`}
+                                    >
+                                      <ArrowDown />
+                                    </ToggleGroupItem>
+                                  </div>
+                                </ToggleGroup>
+                              </FormControl>
+                              <FormMessage className="text-xs col-span-4 w-full text-center" />
+                            </>
+                          )}
+                        />
+                      </>
+                    )}
+
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="description" className="text-right">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span className="flex gap-2">
+                                <Info className="h-4 w-4" />
+                                Target
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-zinc-200">
+                              <p className="text-xs">
+                                Source and Target cannot have the same direction
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </Label>
+                      <Switch
+                        checked={targetToggle}
+                        onCheckedChange={() => {
+                          // if (!sourceToggle) {
+                          setTargetToggle(!targetToggle);
+                          // } else {
+                          //   toast.error("Source and target cannot be enabled.");
+                          // }
+                        }}
+                        className="col-span-3"
+                      />
+                    </div>
+
+                    {targetToggle && (
+                      <>
+                        <Controller
+                          name="target"
+                          control={form.control}
+                          render={({ field }) => (
+                            <>
+                              <FormControl>
+                                <ToggleGroup
+                                  type="multiple"
+                                  className="grid grid-cols-4 items-center gap-4"
+                                  variant="outline"
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                >
+                                  <div className="col-span-4 text-center">
+                                    <ToggleGroupItem
+                                      value="Top"
+                                      className={`${
+                                        form.getValues().source === "Top" &&
+                                        "opacity-50 cursor-not-allowed"
+                                      }`}
+                                      disabled={
+                                        form.getValues().source === "Top"
+                                          ? true
+                                          : false
+                                      }
+                                    >
+                                      <ArrowUp />
+                                    </ToggleGroupItem>
+                                  </div>
+                                  <div className="col-span-4 gap-6 flex items-center justify-between">
+                                    <ToggleGroupItem
+                                      value="Left"
+                                      className={`${
+                                        form.getValues().source === "Left" &&
+                                        "opacity-50 cursor-not-allowed"
+                                      }`}
+                                      disabled={
+                                        form.getValues().source === "Left"
+                                          ? true
+                                          : false
+                                      }
+                                    >
+                                      <ArrowLeft />
+                                    </ToggleGroupItem>
+                                    <div className="border border-1 border-zinc-800 rounded-md px-6 flex items-center">
+                                      <p className="text-center text-xs">
+                                        Select the direction of the target,{" "}
+                                        <div className="text-xs text-zinc-500">
+                                          (Only source will connect to this
+                                          point)
+                                        </div>
+                                      </p>
+                                    </div>
+                                    <ToggleGroupItem
+                                      value="Right"
+                                      className={`${
+                                        form.getValues().source === "Right" &&
+                                        "opacity-50 cursor-not-allowed"
+                                      }`}
+                                      disabled={
+                                        form.getValues().source === "Right"
+                                          ? true
+                                          : false
+                                      }
+                                    >
+                                      <ArrowRight />
+                                    </ToggleGroupItem>
+                                  </div>
+                                  <div className="col-span-4 text-center">
+                                    <ToggleGroupItem
+                                      value="Bottom"
+                                      className={`${
+                                        form.getValues().source === "Bottom" &&
+                                        "opacity-50 cursor-not-allowed"
+                                      }`}
+                                      disabled={
+                                        form.getValues().source === "Bottom"
+                                          ? true
+                                          : false
+                                      }
+                                    >
+                                      <ArrowDown />
+                                    </ToggleGroupItem>
+                                  </div>
+                                </ToggleGroup>
+                              </FormControl>
+                              <FormMessage className="text-xs col-span-4 w-full text-center" />
+                            </>
+                          )}
+                        />
+                      </>
+                    )}
+
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="description" className="text-right">
+                        Type of node
+                      </Label>
+                      <Controller
+                        name="type"
+                        control={form.control}
+                        render={({ field }) => (
+                          <>
+                            <FormControl>
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                              >
+                                <SelectTrigger className="w-[200px]">
+                                  <SelectValue placeholder="Select..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Send Message">
+                                    Send Message
+                                  </SelectItem>
+                                  <SelectItem value="Wait">Wait</SelectItem>
+                                  <SelectItem value="Decision">
+                                    Decision
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage className="text-xs col-span-4 w-full text-center" />
+                          </>
+                        )}
+                      />
+                      {/* <input type="color" {...form.register("color")} /> */}
+                    </div>
+                  </div>
+                </ScrollArea>
+                <SheetFooter>
+                  <SheetClose asChild>
+                    <Button onClick={handleCreate} type="submit">
+                      Create
+                    </Button>
+                  </SheetClose>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+          </form>
+        </Form>
         <hr className="my-6" />
 
         {/* Predefined Nodes */}

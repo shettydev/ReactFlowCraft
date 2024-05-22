@@ -45,12 +45,12 @@ export const getGraphs = async () => {
 }
 
 export const getGraphQuery = () => {
-    const { isLoading, isError, data, isFetching } = useQuery({
+    const { isLoading, isError, data, isFetching, status } = useQuery({
         queryKey: ['graphs'],
         queryFn: getGraphs
     })
 
-    return { isLoading, isError, data, isFetching }
+    return { isLoading, isError, data, isFetching, status }
 }
 
 export const deleteGraph = async (id) => {

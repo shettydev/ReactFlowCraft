@@ -8,7 +8,7 @@ import ReactFlow, {
   useEdgesState,
 } from "reactflow";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getEachGraphQuery } from "@/src/api/graph";
 
 export default function Flow() {

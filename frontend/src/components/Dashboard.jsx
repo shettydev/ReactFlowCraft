@@ -7,11 +7,20 @@ import { deleteGraphQuery, getGraphQuery } from "../api/graph";
 import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
+import { logoutUserQuery } from "../api/auth";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
 
-  const { isLoading, isError, data: graphs, isFetching } = getGraphQuery();
+  const userLogout = logoutUserQuery();
+
+  const {
+    isLoading,
+    isError,
+    data: graphs,
+    isFetching,
+    status,
+  } = getGraphQuery();
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
@@ -32,6 +41,14 @@ export default function Dashboard() {
     }
   }, [window.localStorage.getItem("token")]);
 
+  useEffect(() => {
+    if (isError) {
+      userLogout.mutate();
+      window.localStorage.setItem("token", false);
+      navigate("/signin");
+      toast.error("User logged out.");
+    }
+  }, [isError]);
 
   return (
     <div className="w-full h-screen grainy">
@@ -124,7 +141,7 @@ export default function Dashboard() {
                 </>
               ))}
           </ul>
-        ) : isFetching || isLoading  ? (
+        ) : isFetching || isLoading ? (
           <Skeleton height={100} className="mt-10" count={3} />
         ) : (
           <div className="mt-16 flex flex-col items-center gap-2">
