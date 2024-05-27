@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
+import { CalendarFold, Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -99,8 +99,8 @@ export default function Dashboard() {
 
                     <div className="px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-6 text-xs text-zinc-500">
                       <div className="flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        {format(new Date(graph.createdAt), "MMM yyyy")}
+                        <CalendarFold className="h-4 w-4" />
+                        {format(new Date(graph.createdAt), "d MMM, yyyy")}
                       </div>
 
                       <div className="flex items-center gap-2">
