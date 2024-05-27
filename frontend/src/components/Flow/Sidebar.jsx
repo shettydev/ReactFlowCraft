@@ -64,6 +64,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import PredefinedNodes from "./PredefinedNodes";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Sidebar({
   addNode,
@@ -148,6 +149,21 @@ export default function Sidebar({
   const handleSave = () => {
     setIsLoading(true);
 
+    const nodeIdsWithEdges = new Set(
+      edges.flatMap((edge) => [edge.source, edge.target])
+    );
+    const nodesWithoutEdges = nodes.filter(
+      (node) => !nodeIdsWithEdges.has(node.id)
+    );
+
+    console.log(nodesWithoutEdges)
+
+    if (nodesWithoutEdges.length > 1) {
+      toast.error("There are more than one nodes with no connections.");
+      setIsLoading(false);
+      return;
+    }
+
     const finalData = {
       name: title,
       nodes,
@@ -230,7 +246,7 @@ export default function Sidebar({
                         render={({ field }) => (
                           <>
                             <FormControl>
-                              <Input
+                              <Textarea
                                 className="col-span-3 w-full"
                                 placeholder="Enter text here..."
                                 {...field}

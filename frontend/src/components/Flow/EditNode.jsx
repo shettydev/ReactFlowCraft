@@ -11,11 +11,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
 
 export function EditNode({
   editText,
   handleTextChange,
   handleSave,
+  handleDelete,
   open,
   setOpen,
 }) {
@@ -33,7 +35,7 @@ export function EditNode({
             <Label htmlFor="text" className="text-right">
               Text
             </Label>
-            <Input
+            <Textarea
               id="text"
               value={editText}
               onChange={handleTextChange}
@@ -42,7 +44,14 @@ export function EditNode({
           </div>
         </div>
         <SheetFooter>
-          <SheetClose asChild>
+          <SheetClose className="flex w-full h-full justify-between">
+            <Button
+              variant="outline"
+              onClick={handleDelete}
+              className="hover:bg-red-500 hover:text-white transition-all"
+            >
+              Delete
+            </Button>
             <Button type="button" onClick={handleSave}>
               Save changes
             </Button>

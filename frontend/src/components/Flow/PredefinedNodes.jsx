@@ -54,6 +54,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function PredefinedNodes({ onDragStart, addNode }) {
   const form = useForm();
@@ -176,7 +177,7 @@ export default function PredefinedNodes({ onDragStart, addNode }) {
                   render={({ field }) => (
                     <>
                       <FormControl>
-                        <Input
+                        <Textarea
                           className="col-span-3 w-full"
                           placeholder="Enter text here..."
                           {...field}

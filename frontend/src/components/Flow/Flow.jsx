@@ -23,6 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { EditNode } from "./EditNode";
+import { toast } from "sonner";
 
 export default function Flow() {
   const { graphId } = useParams();
@@ -63,6 +64,14 @@ export default function Flow() {
     setEditText("");
     setOpen(false)
   };
+
+  const handleDelete = () => {
+    setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
+    setSelectedNode(null);
+    setEditText("");
+    setOpen(false);
+  };
+  
 
   const addNode = (newNode) => {
     setNodes((prevNodes) => [...prevNodes, newNode]);
@@ -106,6 +115,7 @@ export default function Flow() {
           editText={editText}
           handleTextChange={handleTextChange}
           handleSave={handleSave}
+          handleDelete={handleDelete}
           setOpen={setOpen}
           open={open}
         />

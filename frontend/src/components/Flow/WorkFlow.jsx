@@ -17,6 +17,7 @@ import "../../index.css";
 import { getEachGraphQuery } from "@/src/api/graph";
 import Skeleton from "react-loading-skeleton";
 import { Loader, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const initBgColor = "#000000";
 
@@ -43,7 +44,7 @@ export default function WorkFlow({
   data,
   isLoading,
   isFetching,
-  onNodeClick
+  onNodeClick,
 }) {
   const reactFlowWrapper = useRef(null);
 
@@ -153,6 +154,18 @@ export default function WorkFlow({
     event.dataTransfer.dropEffect = "move";
   }, []);
 
+  const hasEmptyHandles = (node) => {
+    return (
+      (node.sourcePosition === undefined || node.sourcePosition === null) &&
+      (node.targetPosition === undefined || node.targetPosition === null)
+    );
+  };
+
+  const checkEmptyHandles = (nodes) => {
+    const nodesWithEmptyHandles = nodes.filter(hasEmptyHandles);
+    return nodesWithEmptyHandles.length > 3;
+  };
+
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -206,7 +219,15 @@ export default function WorkFlow({
               },
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      // setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => {
+        const updatedNodes = nds.concat(newNode);
+        // if (checkEmptyHandles(updatedNodes)) {
+        //   toast.error("There are more than 1 node with empty handles");
+        //   return nds; // return the old nodes array, preventing the new node from being added
+        // }
+        return updatedNodes;
+      });
     },
     [reactFlowInstance]
   );
