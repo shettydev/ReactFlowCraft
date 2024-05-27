@@ -42,7 +42,7 @@ export default function Navbar() {
                   variant="link"
                   className="hover:text-blue-600 transition-all"
                 >
-                  <img src={LogoImage} className="w-12 h-12" />
+                  <img src={LogoImage} className="w-8 h-8 mr-4" />
                   ReactFlowCraft
                 </Button>
               </NavLink>
