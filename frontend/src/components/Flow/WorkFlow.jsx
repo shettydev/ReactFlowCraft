@@ -51,6 +51,7 @@ export default function WorkFlow({
   const [bgColor, setBgColor] = useState(initBgColor);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
+  // Checking for exisiting nodes through db
   useEffect(() => {
     if (data) {
       setNodes(data.nodes);
@@ -58,6 +59,7 @@ export default function WorkFlow({
     }
   }, [graphId, isLoading]);
 
+  // Setting background color on template nodes
   useEffect(() => {
     if (!graphId) {
       const onChange = (event) => {
@@ -141,6 +143,7 @@ export default function WorkFlow({
     }
   }, []);
 
+  // function called when nodes are connected
   const onConnect = useCallback(
     (params) =>
       setEdges((eds) =>
@@ -149,11 +152,13 @@ export default function WorkFlow({
     []
   );
 
+  // function called when nodes are dragged
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
 
+  // function called when nodes are dropped
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -212,6 +217,7 @@ export default function WorkFlow({
     [reactFlowInstance]
   );
 
+  // Loading state if the data is still being fetched
   if (isLoading || isFetching)
     return (
       <div className="flex h-full justify-center items-center">

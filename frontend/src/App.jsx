@@ -10,6 +10,7 @@ import SignUp from "./components/SignUp";
 import Flow from "./components/Flow/Flow";
 
 function App() {
+  // App Router
   const browserRouter = createBrowserRouter([
     {
       path: "/",

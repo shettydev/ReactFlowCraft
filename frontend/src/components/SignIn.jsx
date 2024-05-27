@@ -19,6 +19,7 @@ export default function SignIn() {
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
+  // Checking if the user is already logged in
   useEffect(() => {
     setUserLoggedIn(
       window.localStorage.getItem("token") === "true" ? true : false
@@ -37,6 +38,7 @@ export default function SignIn() {
     formState: { errors },
   } = useForm();
 
+  // Sign in function handler
   const onSubmit = (data) => {
     setLoading(true);
     // console.log(data);

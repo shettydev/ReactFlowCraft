@@ -2,22 +2,28 @@ import { Button } from "@/components/ui/button";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { logoutUserQuery } from "../api/auth";
 import { toast } from "sonner";
-import LogoImage from "../assets/logo.png"
+import LogoImage from "../assets/logo.png";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
-  useEffect(() => {
-    setUserLoggedIn(
-      window.localStorage.getItem("token") === "true" ? true : false
-    );
-  }, [window.localStorage.getItem("token")]);
-
   const userLogout = logoutUserQuery();
 
   const navigate = useNavigate();
 
+  // Checking if the user is already logged in
+  useEffect(() => {
+    setUserLoggedIn(
+      window.localStorage.getItem("token") === "true" ? true : false
+    );
+    if (window.localStorage.getItem("token") === "false") {
+      navigate("/signin");
+      toast.warning("User not logged in.");
+    }
+  }, [window.localStorage.getItem("token")]);
+
+  // Sign out function handler
   const onClick = () => {
     userLogout.mutate();
     window.localStorage.setItem("token", false);

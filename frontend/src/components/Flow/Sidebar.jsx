@@ -105,11 +105,13 @@ export default function Sidebar({
 
   const navigate = useNavigate();
 
+  // Dragging the node
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
   };
 
+  // Creating a node
   const handleCreate = () => {
     const data = form.getValues();
 
@@ -146,6 +148,7 @@ export default function Sidebar({
     });
   };
 
+  // Saving the flow
   const handleSave = () => {
     setIsLoading(true);
 
@@ -156,13 +159,14 @@ export default function Sidebar({
       (node) => !nodeIdsWithEdges.has(node.id)
     );
 
+    // Validation check: if there are no nodes
     if (nodes.length < 1) {
       toast.warning("There are no nodes to save.");
       setIsLoading(false);
       return;
     }
 
-
+    // Validation check: if there are more than 1 node
     if (nodesWithoutEdges.length > 1) {
       toast.warning("There are more than one nodes with no connections.");
       setIsLoading(false);
@@ -178,6 +182,7 @@ export default function Sidebar({
     if (data) {
       finalData.id = data._id;
 
+      // API called to update the data
       updateGraph.mutate(finalData, {
         onSuccess: (data) => {
           toast.success("Flow updated.");
@@ -192,6 +197,8 @@ export default function Sidebar({
         },
       });
     } else {
+
+      // API call to create the data
       createGraph.mutate(finalData, {
         onSuccess: (data) => {
           toast.success("Flow saved.");

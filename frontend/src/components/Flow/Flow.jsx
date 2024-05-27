@@ -43,15 +43,18 @@ export default function Flow() {
     setOpen(true);
   }, [selectedNode]);
 
+  // Function for editing nodes on click
   const onNodeClick = (event, node) => {
     setSelectedNode(node);
     setEditText(node.data.label);
   };
 
+  // Function for editing nodes text  
   const handleTextChange = (e) => {
     setEditText(e.target.value);
   };
 
+  // Function for updating nodes
   const handleSave = () => {
     setNodes((nds) =>
       nds.map((node) =>
@@ -66,6 +69,7 @@ export default function Flow() {
     toast.success("Node text updated.");
   };
 
+  // Function for deleting nodes
   const handleDelete = () => {
     setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
     setSelectedNode(null);
@@ -74,6 +78,7 @@ export default function Flow() {
     toast.error("Node deleted.");
   };
 
+  // Function for adding nodes
   const addNode = (newNode) => {
     setNodes((prevNodes) => [...prevNodes, newNode]);
   };

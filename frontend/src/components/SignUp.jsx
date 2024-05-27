@@ -10,20 +10,14 @@ export default function SignUp() {
 
   const navigate = useNavigate();
 
-  const [isLoading, setLoading] = useState(false);
-
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
-
+  // Checking if the user is already logged in
   useEffect(() => {
-    setUserLoggedIn(
-      window.localStorage.getItem("token") === "true" ? true : false
-    );
-
     if (window.localStorage.getItem("token") === "true") {
       navigate("/dashboard");
       toast.warning("User is already logged in.");
     }
   }, [window.localStorage.getItem("token")]);
+
 
   const {
     register,
@@ -32,6 +26,7 @@ export default function SignUp() {
     formState: { errors },
   } = useForm();
 
+  // Create user function
   const onSubmit = (data) => {
     createUser.mutate(data, {
       onSuccess: (data) => {
@@ -114,9 +109,6 @@ export default function SignUp() {
             </div>
           </div>
           <div className="flex w-full items-center justify-end">
-            {/* <button className="shrink-0 inline-block w-36 rounded-lg bg-blue-600 py-3 font-bold text-white">
-              Login
-            </button> */}
             <Button
               type="submit"
               variant="outline"

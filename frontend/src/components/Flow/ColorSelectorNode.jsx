@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Handle, Position } from "reactflow";
 
 export default memo(({ data, isConnectable }) => {
-  console.log("data in selector node", data)
+
   return (
     <>
       <Handle

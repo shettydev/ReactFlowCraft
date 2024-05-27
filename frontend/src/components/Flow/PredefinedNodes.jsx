@@ -63,6 +63,7 @@ export default function PredefinedNodes({ onDragStart, addNode }) {
   const [targetToggle, setTargetToggle] = useState(false);
   const [selectedButton, setSelectedButton] = useState("");
 
+  // Function for creating the node
   const handleCreate = () => {
     const data = form.getValues();
 
