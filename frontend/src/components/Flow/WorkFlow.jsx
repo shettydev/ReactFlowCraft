@@ -154,18 +154,6 @@ export default function WorkFlow({
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  const hasEmptyHandles = (node) => {
-    return (
-      (node.sourcePosition === undefined || node.sourcePosition === null) &&
-      (node.targetPosition === undefined || node.targetPosition === null)
-    );
-  };
-
-  const checkEmptyHandles = (nodes) => {
-    const nodesWithEmptyHandles = nodes.filter(hasEmptyHandles);
-    return nodesWithEmptyHandles.length > 3;
-  };
-
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -194,7 +182,7 @@ export default function WorkFlow({
           type === "Send"
             ? {
                 backgroundColor: "#FECACA",
-                color: "white",
+                color: "black",
                 borderRadius: 10,
                 display: "flex",
                 justifyContent: "center",
@@ -203,7 +191,7 @@ export default function WorkFlow({
             : type === "Wait"
             ? {
                 backgroundColor: "#E9D5FF",
-                color: "white",
+                color: "black",
                 borderRadius: 10,
                 display: "flex",
                 justifyContent: "center",
@@ -211,7 +199,7 @@ export default function WorkFlow({
               }
             : {
                 backgroundColor: "#BBF7D0",
-                color: "white",
+                color: "black",
                 borderRadius: 10,
                 display: "flex",
                 justifyContent: "center",
@@ -219,15 +207,7 @@ export default function WorkFlow({
               },
       };
 
-      // setNodes((nds) => nds.concat(newNode));
-      setNodes((nds) => {
-        const updatedNodes = nds.concat(newNode);
-        // if (checkEmptyHandles(updatedNodes)) {
-        //   toast.error("There are more than 1 node with empty handles");
-        //   return nds; // return the old nodes array, preventing the new node from being added
-        // }
-        return updatedNodes;
-      });
+      setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance]
   );
