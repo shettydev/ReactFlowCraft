@@ -524,7 +524,7 @@ export default function Sidebar({
             </p>
 
             <p className="text-zinc-600 text-xs italic flex mt-4">
-              <Mouse className="h-4 w-4 mr-2" /> Or you can left-click on them
+              <Mouse className="h-4 w-4 mr-2" /> Or you can click on them
               to customize.
             </p>
           </div>
