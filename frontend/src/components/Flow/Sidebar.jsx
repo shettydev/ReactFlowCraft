@@ -29,8 +29,10 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  Hand,
   Info,
   Loader2,
+  Mouse,
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
@@ -494,8 +496,14 @@ export default function Sidebar({
         {/* Predefined Nodes */}
         <div className="w-full">
           <div className="my-2">
-            <p className="text-zinc-600 text-sm italic">
+            <p className="text-zinc-600 text-xs italic flex">
+              <Hand className="h-4 w-4 mr-2" />
               You can drag these nodes to the pane on the left.
+            </p>
+
+            <p className="text-zinc-600 text-xs italic flex mt-4">
+              <Mouse className="h-4 w-4 mr-2" /> Or you can left-click on them
+              to customize.
             </p>
           </div>
 

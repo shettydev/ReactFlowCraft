@@ -43,6 +43,7 @@ export default function WorkFlow({
   data,
   isLoading,
   isFetching,
+  onNodeClick
 }) {
   const reactFlowWrapper = useRef(null);
 
@@ -226,6 +227,7 @@ export default function WorkFlow({
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          onNodeClick={onNodeClick}
           onConnect={onConnect}
           style={{ background: bgColor }}
           nodeTypes={nodeTypes}
