@@ -61,6 +61,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import PredefinedNodes from "./PredefinedNodes";
 
 export default function Sidebar({
   addNode,
@@ -85,10 +86,8 @@ export default function Sidebar({
     mode: "onChange",
   });
 
-  const [text, setText] = useState("");
   const [sourceToggle, setSourceToggle] = useState(false);
   const [targetToggle, setTargetToggle] = useState(false);
-  const [source, setSource] = useState("");
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -110,22 +109,13 @@ export default function Sidebar({
 
   const handleCreate = () => {
     const data = form.getValues();
-    console.log("data 123", data);
 
-    // if (!data.text || (sourceToggle ? !data.source : !data.target)) {
-    //   toast.error("All fields are required");
-    //   return;
-    // }
+    if (!data.text || (sourceToggle ? !data.source : !data.target)) {
+      toast.error("All fields are required");
+      return;
+    }
 
     // // Create a new node data object based on the sidebar input
-    // const newNode = {
-    //   id: Math.random().toString(),
-    //   type: sourceToggle ? "input" : "output",
-    //   data: { label: `${data.text}` },
-    //   position: { x: 0, y: 0 },
-    //   sourcePosition: sourceToggle ? data.source : null,
-    //   targetPosition: targetToggle ? data.target : null,
-    // };
 
     const newNode = {
       id: Math.random().toString(),
@@ -134,19 +124,15 @@ export default function Sidebar({
         label: `${data.text}`,
         source: data.source,
         target: data.target,
-        color: data.color,
-        type: data.type,
       },
       position: { x: 0, y: 0 },
       // sourcePosition: sourceToggle ? data.source : null,
       // targetPosition: targetToggle ? data.target : null,
     };
 
-    console.log("newNode", newNode);
     // Pass the new node to the parent component for adding it to the workflow
     addNode(newNode);
 
-    setText("");
     setTargetToggle(false);
     setSourceToggle(false);
 
@@ -168,8 +154,6 @@ export default function Sidebar({
 
     if (data) {
       finalData.id = data._id;
-
-      console.log("finalData", finalData);
 
       updateGraph.mutate(finalData, {
         onSuccess: (data) => {
@@ -215,6 +199,7 @@ export default function Sidebar({
           </Button>
         </div>
 
+        {/* Custom node form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleCreate)}>
             {/* Create Text Node */}
@@ -254,9 +239,25 @@ export default function Sidebar({
                         )}
                       />
                     </div>
+
+                    {/* Source Switch */}
                     <div className="grid grid-cols-4 items-center gap-4">
                       <Label htmlFor="description" className="text-right">
-                        Source
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span className="flex gap-2">
+                                Source
+                                <Info className="h-4 w-4" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-zinc-300">
+                              <p className="text-xs">
+                                A node can have only one source
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </Label>
 
                       <Switch
@@ -272,6 +273,7 @@ export default function Sidebar({
                       />
                     </div>
 
+                    {/* Source Group */}
                     {sourceToggle && (
                       <>
                         <Controller
@@ -347,17 +349,18 @@ export default function Sidebar({
                       </>
                     )}
 
+                    {/* Toggle Switch */}
                     <div className="grid grid-cols-4 items-center gap-4">
                       <Label htmlFor="description" className="text-right">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
                               <span className="flex gap-2">
-                                <Info className="h-4 w-4" />
                                 Target
+                                <Info className="h-4 w-4" />
                               </span>
                             </TooltipTrigger>
-                            <TooltipContent className="bg-zinc-200">
+                            <TooltipContent className="bg-zinc-300">
                               <p className="text-xs">
                                 Source and Target cannot have the same direction
                               </p>
@@ -378,6 +381,7 @@ export default function Sidebar({
                       />
                     </div>
 
+                    {/* Toggle Group */}
                     {targetToggle && (
                       <>
                         <Controller
@@ -387,7 +391,7 @@ export default function Sidebar({
                             <>
                               <FormControl>
                                 <ToggleGroup
-                                  type="multiple"
+                                  type="single"
                                   className="grid grid-cols-4 items-center gap-4"
                                   variant="outline"
                                   value={field.value}
@@ -472,41 +476,6 @@ export default function Sidebar({
                         />
                       </>
                     )}
-
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="description" className="text-right">
-                        Type of node
-                      </Label>
-                      <Controller
-                        name="type"
-                        control={form.control}
-                        render={({ field }) => (
-                          <>
-                            <FormControl>
-                              <Select
-                                value={field.value}
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="w-[200px]">
-                                  <SelectValue placeholder="Select..." />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="Send Message">
-                                    Send Message
-                                  </SelectItem>
-                                  <SelectItem value="Wait">Wait</SelectItem>
-                                  <SelectItem value="Decision">
-                                    Decision
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage className="text-xs col-span-4 w-full text-center" />
-                          </>
-                        )}
-                      />
-                      {/* <input type="color" {...form.register("color")} /> */}
-                    </div>
                   </div>
                 </ScrollArea>
                 <SheetFooter>
@@ -530,32 +499,7 @@ export default function Sidebar({
             </p>
           </div>
 
-          <div className="flex mt-10 flex-col gap-5">
-            <Button
-              variant="outline"
-              className="border-red-200"
-              onDragStart={(event) => onDragStart(event, "Send Email")}
-              draggable
-            >
-              Send Email
-            </Button>
-            <Button
-              variant="outline"
-              className="border-purple-200"
-              onDragStart={(event) => onDragStart(event, "Wait")}
-              draggable
-            >
-              Wait
-            </Button>
-            <Button
-              variant="outline"
-              className="border-green-200"
-              onDragStart={(event) => onDragStart(event, "Decision")}
-              draggable
-            >
-              Decision
-            </Button>
-          </div>
+          <PredefinedNodes addNode={addNode} onDragStart={onDragStart} />
         </div>
 
         {/* Save workflow & Modal */}

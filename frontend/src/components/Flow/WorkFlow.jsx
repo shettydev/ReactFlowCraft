@@ -24,7 +24,7 @@ const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
 const nodeTypes = {
   selectorNode: ColorSelectorNode,
-  custom: CustomNode
+  custom: CustomNode,
 };
 
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
@@ -171,14 +171,13 @@ export default function WorkFlow({
         y: event.clientY,
       });
 
-      console.log("type", type);
       const newNode = {
         id: getId(),
         type,
         position,
         data: { label: `${type} node` },
         style:
-          type === "Send Email"
+          type === "Send"
             ? {
                 backgroundColor: "#FECACA",
                 color: "white",
@@ -245,6 +244,7 @@ export default function WorkFlow({
               if (n.type === "input") return "#0041d0";
               if (n.type === "selectorNode") return bgColor;
               if (n.type === "output") return "#ff0072";
+              return "#373A40";
             }}
             nodeColor={(n) => {
               if (n.type === "selectorNode") return bgColor;

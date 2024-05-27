@@ -15,7 +15,7 @@ router.post("/:id", authMiddleware, async (req, res) => {
 
     // Iterate through the nodes of the graph
     for (const node of graph.nodes) {
-      if (node.type === "Send Email") {
+      if (node.type === "Send") {
         // Send an email for "Send Email" nodes
         await sendEmail(node.parameters);
       }
