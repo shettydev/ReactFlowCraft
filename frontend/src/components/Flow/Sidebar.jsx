@@ -230,7 +230,7 @@ export default function Sidebar({
 
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline">Create a node</Button>
+                <Button variant="outline" className="w-full">Create a node</Button>
               </SheetTrigger>
 
               <SheetContent>
