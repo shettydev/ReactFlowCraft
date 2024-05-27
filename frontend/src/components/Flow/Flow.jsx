@@ -62,7 +62,8 @@ export default function Flow() {
     );
     setSelectedNode(null);
     setEditText("");
-    setOpen(false)
+    setOpen(false);
+    toast.success("Node text updated.");
   };
 
   const handleDelete = () => {
@@ -70,8 +71,8 @@ export default function Flow() {
     setSelectedNode(null);
     setEditText("");
     setOpen(false);
+    toast.error("Node deleted.");
   };
-  
 
   const addNode = (newNode) => {
     setNodes((prevNodes) => [...prevNodes, newNode]);

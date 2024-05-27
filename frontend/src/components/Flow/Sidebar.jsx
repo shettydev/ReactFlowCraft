@@ -156,10 +156,15 @@ export default function Sidebar({
       (node) => !nodeIdsWithEdges.has(node.id)
     );
 
-    console.log(nodesWithoutEdges)
+    if (nodes.length < 1) {
+      toast.warning("There are no nodes to save.");
+      setIsLoading(false);
+      return;
+    }
+
 
     if (nodesWithoutEdges.length > 1) {
-      toast.error("There are more than one nodes with no connections.");
+      toast.warning("There are more than one nodes with no connections.");
       setIsLoading(false);
       return;
     }
@@ -210,6 +215,7 @@ export default function Sidebar({
             variant="ghost"
             onClick={() => {
               setNodes([]);
+              toast.error("All nodes & edges cleared.");
             }}
             className="mb-4 text-red-500 hover:bg-red-400 hover:text-white"
           >
